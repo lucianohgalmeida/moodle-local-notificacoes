@@ -3,7 +3,7 @@
  * Configurações do plugin local_notificacoes.
  *
  * @package   local_notificacoes
- * @author    
+ * @author    TecheEduconnect.com.br
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -3,7 +3,7 @@
  * Tarefa agendada para enviar notificações a alunos matriculados em cursos de extensão.
  *
  * @package   local_notificacoes
- * @author    
+ * @author    TecheEduconnect.com.br
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
