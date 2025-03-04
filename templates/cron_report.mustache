@@ -1,0 +1,43 @@
+<div class="card">
+    <div class="card-header">
+        <h3>{{#str}} cron_report, local_notificacoes {{/str}}</h3>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">{{#str}} execution_date, local_notificacoes {{/str}}</dt>
+            <dd class="col-sm-9">{{execution_date}}</dd>
+            
+            <dt class="col-sm-3">{{#str}} total_time, local_notificacoes {{/str}}</dt>
+            <dd class="col-sm-9">{{total_time}}s</dd>
+            
+            <dt class="col-sm-3">{{#str}} memory_usage, local_notificacoes {{/str}}</dt>
+            <dd class="col-sm-9">{{memory_usage}}</dd>
+        </dl>
+
+        <h4>{{#str}} task_results, local_notificacoes {{/str}}</h4>
+        <div class="list-group">
+            {{#results}}
+            <div class="list-group-item {{#status_success}}list-group-item-success{{/status_success}} {{#status_error}}list-group-item-danger{{/status_error}}">
+                <div class="d-flex justify-content-between">
+                    <h5>{{task_name}}</h5>
+                    <span class="badge bg-{{#status_success}}success{{/status_success}}{{#status_error}}danger{{/status_error}}">
+                        {{status}}
+                    </span>
+                </div>
+                <dl class="row mt-2">
+                    <dt class="col-sm-2">{{#str}} duration, local_notificacoes {{/str}}</dt>
+                    <dd class="col-sm-4">{{time}}s</dd>
+                    <dt class="col-sm-2">{{#str}} memory, local_notificacoes {{/str}}</dt>
+                    <dd class="col-sm-4">{{memory}} bytes</dd>
+                    {{#error}}
+                    <dt class="col-sm-12 text-danger mt-2">
+                        {{error}}<br>
+                        <small>{{trace}}</small>
+                    </dt>
+                    {{/error}}
+                </dl>
+            </div>
+            {{/results}}
+        </div>
+    </div>
+</div>

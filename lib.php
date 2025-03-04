@@ -1,6 +1,6 @@
 <?php
 /**
- * Main library for the plugin local_notificacoes.
+ * Biblioteca principal do plugin de Notificações Automáticas.
  *
  * @package   local_notificacoes
  * @author    TecheEduconnect.com.br
@@ -10,135 +10,171 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Sends a notification email to the user.
- *
- * @param object $user User object
- * @param object $course Course object
- * @param string $subject Email subject
- * @param string $message Email body
- * @return bool True if email sent successfully, false otherwise
+ * Classe com funções auxiliares para o plugin
+ */
+class local_notificacoes_helper {
+
+    /**
+     * Envia notificação para o usuário usando o sistema de mensagens do Moodle
+     */
+    public static function send_notification($userid, $courseid, $type, $data = []) {
+        global $CFG;
+
+        try {
+            $manager = new \local_notificacoes\manager();
+            $user = \core_user::get_user($userid);
+            $course = get_course($courseid);
+
+            // Validação básica
+            if ($user->deleted || !$course->visible) {
+                throw new moodle_exception('invalid_recipient', 'local_notificacoes');
+            }
+
+            // Montagem da mensagem
+            $message = $manager::render_notification_template($type, [
+                'user' => $user,
+                'course' => $course,
+                'data' => $data
+            ]);
+
+            // Envio multicanal
+            self::send_multichannel(
+                $user,
+                get_string("subject_{$type}", 'local_notificacoes'),
+                $message
+            );
+
+            return true;
+
+        } catch (Exception $e) {
+            $manager::log_failure(
+                $userid,
+                $courseid,
+                $type,
+                $e->getMessage()
+            );
+            return false;
+        }
+    }
+
+    /**
+     * Envio por múltiplos canais (email/mensagem interna)
+     */
+    private static function send_multichannel($user, $subject, $content) {
+        // Configurações do plugin
+        $admin_email = get_config('local_notificacoes', 'admin_email') ?: \core_user::get_support_user()->email;
+        $enable_sms = get_config('local_notificacoes', 'enable_sms');
+
+        // Envio por email
+        email_to_user(
+            $user,
+            \core_user::get_user_by_email($admin_email),
+            $subject,
+            strip_tags($content),
+            $content
+        );
+
+        // Mensagem interna do Moodle
+        if (get_config('local_notificacoes', 'enable_messaging')) {
+            message_send(
+                new \core\message\message(),
+                $user,
+                $subject,
+                $content
+            );
+        }
+
+        // SMS (se habilitado)
+        if ($enable_sms && function_exists('sms_send')) {
+            sms_send($user->phone1, shorten_content($content, 160));
+        }
+    }
+
+    /**
+     * Valida se uma notificação já foi enviada
+     */
+    public static function is_notification_sent($userid, $courseid, $type) {
+        return \local_notificacoes\manager::notification_exists(
+            $userid,
+            $courseid,
+            $type
+        );
+    }
+
+    /**
+     * Obtém categorias monitoradas com validação
+     */
+    public static function get_validated_categories() {
+        global $DB;
+        
+        $categories = explode(',', get_config('local_notificacoes', 'course_categories'));
+        if (empty($categories)) return [];
+
+        list($insql, $params) = $DB->get_in_or_equal($categories, SQL_PARAMS_NAMED);
+        return $DB->get_fieldset_select(
+            'course_categories',
+            'id',
+            "id $insql AND visible = 1",
+            $params
+        );
+    }
+
+    /**
+     * Obtém data de início do curso formatada
+     */
+    public static function get_formatted_start_date($courseid, $userid = null) {
+        $course = get_course($courseid);
+        return $course->startdate ? userdate(
+            $course->startdate,
+            get_string('strftimedatefull', 'langconfig'),
+            $userid ? \core_date::get_user_timezone($userid) : null
+        ) : get_string('notavailable', 'moodle');
+    }
+
+    /**
+     * Verifica resposta de professores em discussão
+     */
+    public static function has_teacher_response($discussionid) {
+        global $DB;
+
+        $teacher_roles = $DB->get_records_menu('role', null, '', 'shortname,id');
+        $teacher_role_ids = array_filter($teacher_roles, function($k) {
+            return in_array($k, ['editingteacher', 'teacher']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        return $DB->record_exists_sql(
+            "SELECT 1 FROM {forum_posts} fp
+             JOIN {role_assignments} ra ON fp.userid = ra.userid
+             WHERE fp.discussion = :discussionid
+             AND ra.roleid IN (" . implode(',', $teacher_role_ids) . ")",
+            ['discussionid' => $discussionid]
+        );
+    }
+}
+
+/**
+ * Funções de compatibilidade (para APIs externas)
+ */
+
+/**
+ * @deprecated
  */
 function local_notificacoes_send_email($user, $course, $subject, $message) {
-    global $CFG;
-
-    $emailuser = new stdClass();
-    $emailuser->id = $user->id;
-    $emailuser->email = $user->email;
-    $emailuser->firstname = $user->firstname;
-    $emailuser->lastname = $user->lastname;
-
-    $emailfrom = get_admin();
-    return email_to_user($emailuser, $emailfrom, $subject, strip_tags($message), $message);
+    return local_notificacoes_helper::send_notification(
+        $user->id,
+        $course->id,
+        'legacy_email',
+        ['subject' => $subject, 'message' => $message]
+    );
 }
 
 /**
- * Logs notification activity in the database.
- *
- * @param int $userid User ID
- * @param int $courseid Course ID
- * @param string $notificationtype Type of notification
+ * @deprecated
  */
 function local_notificacoes_log_notification($userid, $courseid, $notificationtype) {
-    global $DB;
-
-    $record = new stdClass();
-    $record->userid = $userid;
-    $record->courseid = $courseid;
-    $record->notificationtype = $notificationtype;
-    $record->timecreated = time();
-
-    $DB->insert_record('local_notificacoes_log', $record);
-}
-
-/**
- * Retrieves the list of monitored course categories.
- *
- * @return array List of category IDs
- */
-function local_notificacoes_get_monitored_categories() {
-    $categories = get_config('local_notificacoes', 'course_categories');
-    return !empty($categories) ? explode(',', $categories) : [];
-}
-
-/**
- * Checks if a notification has already been sent.
- *
- * @param int $userid User ID
- * @param int $courseid Course ID
- * @param string $notificationtype Type of notification
- * @return bool True if notification exists, false otherwise
- */
-function local_notificacoes_notification_exists($userid, $courseid, $notificationtype) {
-    global $DB;
-    return $DB->record_exists('local_notificacoes_log', [
-        'userid' => $userid,
-        'courseid' => $courseid,
-        'notificationtype' => $notificationtype
-    ]);
-}
-
-/**
- * Fetches enrolled users in a course.
- *
- * @param int $courseid Course ID
- * @return array List of enrolled users
- */
-function local_notificacoes_get_enrolled_users($courseid) {
-    global $DB;
-    $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.email
-            FROM {user_enrolments} ue
-            JOIN {user} u ON ue.userid = u.id
-            JOIN {enrol} e ON ue.enrolid = e.id
-            WHERE e.courseid = ?";
-    return $DB->get_records_sql($sql, [$courseid]);
-}
-
-/**
- * Fetches the enrollment date of a user in a course.
- *
- * @param int $userid User ID
- * @param int $courseid Course ID
- * @return string Enrollment date in d/m/Y format
- */
-function local_notificacoes_get_enrollment_date($userid, $courseid) {
-    global $DB;
-    $sql = "SELECT ue.timecreated
-            FROM {user_enrolments} ue
-            JOIN {enrol} e ON ue.enrolid = e.id
-            WHERE ue.userid = ? AND e.courseid = ?";
-    $record = $DB->get_record_sql($sql, [$userid, $courseid]);
-
-    return !empty($record->timecreated) ? date('d/m/Y', $record->timecreated) : 'N/A';
-}
-
-/**
- * Fetches the course start date.
- *
- * @param int $courseid Course ID
- * @return string Course start date in d/m/Y format
- */
-function local_notificacoes_get_course_start_date($courseid) {
-    global $DB;
-    $startdate = $DB->get_field('course', 'startdate', ['id' => $courseid]);
-    return !empty($startdate) ? date('d/m/Y', $startdate) : 'N/A';
-}
-
-/**
- * Checks if a teacher has responded to a student's post in a forum.
- *
- * @param int $discussionid Forum discussion ID
- * @return bool True if a teacher has responded, false otherwise
- */
-function local_notificacoes_teacher_responded($discussionid) {
-    global $DB;
-
-    $sql = "SELECT p.id
-            FROM {forum_posts} p
-            JOIN {user} u ON p.userid = u.id
-            JOIN {role_assignments} ra ON ra.userid = u.id
-            JOIN {context} ctx ON ra.contextid = ctx.id
-            JOIN {course} c ON ctx.instanceid = c.id
-            WHERE p.discussion = ? AND ra.roleid IN (3, 4)"; // 3 = Editing Teacher, 4 = Non-editing Teacher
-
-    return $DB->record_exists_sql($sql, [$discussionid]);
+    \local_notificacoes\manager::log_notification(
+        $userid,
+        $courseid,
+        $notificationtype
+    );
 }

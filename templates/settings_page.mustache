@@ -1,0 +1,41 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{#str}} settings_heading, local_notificacoes {{/str}}</h3>
+                </div>
+                <div class="card-body">
+                    {{{form}}}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{#str}} statistics, local_notificacoes {{/str}}</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-6">{{#str}} total_notifications, local_notificacoes {{/str}}</dt>
+                        <dd class="col-6">{{stats.total_notifications}}</dd>
+                        
+                        <dt class="col-6">{{#str}} last_week, local_notificacoes {{/str}}</dt>
+                        <dd class="col-6">{{stats.last_week}}</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h4>{{#str}} system_info, local_notificacoes {{/str}}</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>{{#str}} last_execution, local_notificacoes {{/str}}:</strong> {{last_execution.timestamp}}</p>
+                    <p><strong>{{#str}} execution_duration, local_notificacoes {{/str}}:</strong> {{last_execution.duration}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

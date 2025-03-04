@@ -1,71 +1,89 @@
 <?php
-/**
- * Arquivo de tradução para o idioma Português do Brasil (pt_br).
- *
- * @package   local_notificacoes
- * @author    TecheEduconnect.com.br
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+// Arquivo de tradução em Português Brasileiro
 defined('MOODLE_INTERNAL') || die();
 
-// Nome do plugin
 $string['pluginname'] = 'Notificações Automáticas';
 
-// Configurações do plugin
-$string['settings_header'] = 'Configurações das Notificações';
-$string['settings_description'] = 'Configure as categorias de cursos monitoradas e os intervalos de envio de notificações.';
-$string['enable_notifications'] = 'Ativar notificações';
-$string['enable_notifications_desc'] = 'Ativar ou desativar todas as notificações enviadas pelo plugin.';
-$string['course_categories'] = 'Categorias de cursos';
-$string['course_categories_desc'] = 'Informe as IDs das categorias separadas por vírgula para monitoramento.';
-$string['admin_email'] = 'E-mail do Administrador';
-$string['admin_email_desc'] = 'E-mail usado como remetente das notificações.';
+// Configurações Gerais
+$string['generalsettings'] = 'Configurações Gerais';
+$string['generalsettings_desc'] = 'Configurações básicas de operação do plugin';
+$string['enableplugin'] = 'Ativar Plugin';
+$string['enableplugin_desc'] = 'Habilita/desabilita todo o sistema de notificações';
 
-// Notificações para alunos
-$string['subject_student_enrollment'] = '📚 Matrícula Confirmada no curso: {$a->coursename}';
-$string['email_student_enrollment'] = 'Olá {$a->fullname},
+// Categorias
+$string['categoriesettings'] = 'Configurações de Categorias';
+$string['categoriesettings_desc'] = 'Selecione as categorias que serão monitoradas';
+$string['coursecategories'] = 'Categorias de Cursos';
+$string['coursecategories_desc'] = 'Selecione as categorias de cursos para monitoramento';
 
-Você foi matriculado no curso <b>{$a->coursename}</b>.
+// Tempo
+$string['timesettings'] = 'Configurações de Tempo';
+$string['timesettings_desc'] = 'Intervalos para disparo de notificações';
+$string['studentreminder'] = 'Lembrete para Alunos';
+$string['studentreminder_desc'] = 'Tempo antes do início do curso para enviar lembrete';
+$string['teacheralert'] = 'Alerta para Professores';
+$string['teacheralert_desc'] = 'Tempo máximo sem resposta nos fóruns';
 
-🔗 <b>Acesse o curso:</b> <a href="{$a->siteurl}">{$a->siteurl}</a>  
-👤 <b>Seu login:</b> {$a->username}  
+// Notificações
+$string['notificationsettings'] = 'Configurações de Notificação';
+$string['notificationsettings_desc'] = 'Preferências de entrega de notificações';
+$string['notificationchannels'] = 'Canais de Notificação';
+$string['notificationchannels_desc'] = 'Selecione os canais de comunicação a serem utilizados';
+$string['channel_email'] = 'E-mail';
+$string['channel_messaging'] = 'Mensagens Internas';
+$string['channel_sms'] = 'SMS';
 
+// E-mail
+$string['emailsender'] = 'Remetente de E-mail';
+$string['emailsender_desc'] = 'Endereço de e-mail que aparecerá como remetente';
+$string['emailtemplate'] = 'Template de E-mail';
+$string['emailtemplate_desc'] = 'Use placeholders: {user}, {course}, {date}';
+
+// Notificações para Alunos
+$string['subject_enrollment'] = '📚 Matrícula Confirmada no Curso: {$a}';
+$string['email_student_enrollment'] = 'Olá {fullname},<br><br>
+Você foi matriculado no curso <b>{coursename}</b>.<br><br>
+🔗 <b>Acesse o curso:</b> <a href="{courseurl}">{courseurl}</a><br>
+👤 <b>Seu login:</b> {username}<br><br>
 Bons estudos! 🚀';
 
-// Notificações de lembrete aos alunos
-$string['subject_student_reminder'] = '⏳ Seu curso {$a->coursename} começa em breve!';
-$string['email_student_reminder'] = 'Olá {$a->fullname},
+$string['subject_reminder'] = '⏳ Seu Curso {$a} Começa em Breve!';
+$string['email_student_reminder'] = 'Olá {fullname},<br><br>
+O curso <b>{coursename}</b> começará em {startdate}!<br><br>
+🔗 <b>Acesse o curso:</b> <a href="{courseurl}">{courseurl}</a><br><br>
+Não perca o início! 📆';
 
-O curso <b>{$a->coursename}</b> começará em breve!
+// Notificações para Professores
+$string['subject_teacher_alert'] = '🕒 Postagem Não Respondida em {$a}';
+$string['email_teacher_notification'] = 'Olá {teachername},<br><br>
+Há uma postagem não respondida no fórum do curso <b>{coursename}</b>:<br><br>
+💬 "{postcontent}"<br><br>
+🔗 <a href="{forumurl}">Acessar o fórum</a><br><br>
+Por favor, responda dentro de 24 horas. 👍';
 
-🔗 <b>Acesse o curso:</b> <a href="{$a->siteurl}">{$a->siteurl}</a>  
-📆 <b>Data de início:</b> {$a->coursestartdate}  
+// Logs e Estatísticas
+$string['total_notifications'] = 'Total de Notificações';
+$string['last_week'] = 'Últimos 7 Dias';
+$string['last_execution'] = 'Última Execução';
+$string['execution_duration'] = 'Duração da Execução';
 
-Não perca essa oportunidade de aprendizado! 🎯';
+// Erros
+$string['invalid_request'] = 'Requisição Inválida';
+$string['nocategories'] = 'Selecione pelo menos uma categoria';
+$string['invalid_hours'] = 'Horas devem ser maiores que zero';
+$string['error_email_send'] = 'Erro ao enviar para {email}';
 
-// Notificações para professores sobre postagens não respondidas
-$string['subject_teacher_notification'] = '🕒 Responda ao aluno no fórum do curso {$a->coursename}';
-$string['email_teacher_notification'] = 'Olá {$a->teachername},
+// Sucesso
+$string['settings_saved'] = 'Configurações salvas com sucesso!';
+$string['cron_task_executed'] = 'Tarefa {$a} executada';
 
-Um aluno fez uma postagem no fórum do curso <b>{$a->coursename}</b> há mais de 24 horas e ainda não recebeu uma resposta.
+// Cron
+$string['cron_execution'] = 'Execução Manual do Cron';
+$string['cron_report'] = 'Relatório de Execução';
+$string['system_load'] = 'Carga do Sistema';
+$string['status_success'] = 'Sucesso';
+$string['status_error'] = 'Erro';
 
-📍 <b>Fórum:</b> <a href="{$a->siteurl}">Acesse o tópico</a>  
-
-A participação ativa dos professores melhora o aprendizado dos alunos. Contamos com você! 👍';
-
-// Mensagens de log
-$string['log_enrollment_sent'] = 'Notificação de matrícula enviada para {$a->userid} no curso {$a->courseid}.';
-$string['log_reminder_sent'] = 'Lembrete enviado para {$a->userid} no curso {$a->courseid}.';
-$string['log_teacher_notified'] = 'Notificação de interação pendente enviada para o professor {$a->userid} no curso {$a->courseid}.';
-
-// Mensagens de erro
-$string['error_no_categories'] = 'Nenhuma categoria foi configurada para notificações.';
-$string['error_no_enrollments'] = 'Nenhuma matrícula nova encontrada para envio de notificações.';
-$string['error_no_teachers'] = 'Nenhum professor encontrado para notificação de postagens não respondidas.';
-$string['error_no_reminders'] = 'Nenhum lembrete necessário no momento.';
-$string['error_email_send'] = 'Erro ao enviar notificação para {$a->email}.';
-
-// Mensagens de sucesso
-$string['success_notification_sent'] = 'Notificação enviada com sucesso!';
-$string['success_configuration_saved'] = 'Configurações salvas com sucesso!';
+// Eventos
+$string['event_settings_updated'] = 'Configurações Atualizadas';
+$string['event_manual_cron_executed'] = 'Cron Manual Executado';

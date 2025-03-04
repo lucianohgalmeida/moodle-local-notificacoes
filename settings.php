@@ -10,65 +10,106 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('local_notificacoes', get_string('pluginname', 'local_notificacoes'));
+    $settings = new admin_settingpage('local_notificacoes', 
+        get_string('pluginname', 'local_notificacoes'),
+        'local/notificacoes:manage'
+    );
 
-    // Seção de Configurações Gerais.
+    // ==================== CONFIGURAÇÕES GERAIS ==================== //
     $settings->add(new admin_setting_heading(
-        'local_notificacoes/generalsettings',
+        'local_notificacoes/general_heading',
         get_string('generalsettings', 'local_notificacoes'),
-        ''
+        get_string('generalsettings_desc', 'local_notificacoes')
     ));
 
-    // Configuração para selecionar categorias monitoradas.
-    $settings->add(new admin_setting_configtext(
+    // Estado do plugin
+    $settings->add(new admin_setting_configcheckbox(
+        'local_notificacoes/enableplugin',
+        get_string('enableplugin', 'local_notificacoes'),
+        get_string('enableplugin_desc', 'local_notificacoes'),
+        1
+    ));
+
+    // ==================== CONFIGURAÇÕES DE CATEGORIAS ==================== //
+    $settings->add(new admin_setting_heading(
+        'local_notificacoes/categories_heading',
+        get_string('categoriesettings', 'local_notificacoes'),
+        get_string('categoriesettings_desc', 'local_notificacoes')
+    ));
+
+    // Seletor de categorias
+    $categories = coursecat::make_categories_list();
+    $settings->add(new admin_setting_configmultiselect(
         'local_notificacoes/course_categories',
         get_string('coursecategories', 'local_notificacoes'),
         get_string('coursecategories_desc', 'local_notificacoes'),
-        '',
-        PARAM_TEXT
+        [],
+        $categories
     ));
 
-    // Configuração para definir o intervalo de lembrete para alunos antes do início do curso (padrão: 72h).
-    $settings->add(new admin_setting_configtext(
-        'local_notificacoes/student_reminder_hours',
-        get_string('studentreminderhours', 'local_notificacoes'),
-        get_string('studentreminderhours_desc', 'local_notificacoes'),
-        72,
-        PARAM_INT
+    // ==================== CONFIGURAÇÕES DE TEMPO ==================== //
+    $settings->add(new admin_setting_heading(
+        'local_notificacoes/time_heading',
+        get_string('timesettings', 'local_notificacoes'),
+        get_string('timesettings_desc', 'local_notificacoes')
     ));
 
-    // Configuração para definir o tempo limite para professores responderem posts (padrão: 24h).
-    $settings->add(new admin_setting_configtext(
-        'local_notificacoes/teacher_response_hours',
-        get_string('teacherresponsehours', 'local_notificacoes'),
-        get_string('teacherresponsehours_desc', 'local_notificacoes'),
-        24,
-        PARAM_INT
+    // Lembrete para alunos
+    $settings->add(new admin_setting_configduration(
+        'local_notificacoes/student_reminder',
+        get_string('studentreminder', 'local_notificacoes'),
+        get_string('studentreminder_desc', 'local_notificacoes'),
+        72 * 3600, // 72 horas em segundos
+        HOURSECS // Unidade de incremento
     ));
 
-    // Configuração para ativar/desativar notificações para alunos.
-    $settings->add(new admin_setting_configcheckbox(
-        'local_notificacoes/enable_student_notifications',
-        get_string('enablestudentnotifications', 'local_notificacoes'),
-        '',
-        1
+    // Alerta para professores
+    $settings->add(new admin_setting_configduration(
+        'local_notificacoes/teacher_alert',
+        get_string('teacheralert', 'local_notificacoes'),
+        get_string('teacheralert_desc', 'local_notificacoes'),
+        24 * 3600, // 24 horas em segundos
+        HOURSECS
     ));
 
-    // Configuração para ativar/desativar notificações para professores.
-    $settings->add(new admin_setting_configcheckbox(
-        'local_notificacoes/enable_teacher_notifications',
-        get_string('enableteachernotifications', 'local_notificacoes'),
-        '',
-        1
+    // ==================== CONFIGURAÇÕES DE NOTIFICAÇÃO ==================== //
+    $settings->add(new admin_setting_heading(
+        'local_notificacoes/notifications_heading',
+        get_string('notificationsettings', 'local_notificacoes'),
+        get_string('notificationsettings_desc', 'local_notificacoes')
     ));
 
-    // Configuração do remetente do e-mail.
+    // Configurações de canais
+    $settings->add(new admin_setting_configmulticheckbox(
+        'local_notificacoes/notification_channels',
+        get_string('notificationchannels', 'local_notificacoes'),
+        get_string('notificationchannels_desc', 'local_notificacoes'),
+        ['email', 'messaging'], // Valores padrão
+        [
+            'email' => get_string('channel_email', 'local_notificacoes'),
+            'messaging' => get_string('channel_messaging', 'local_notificacoes'),
+            'sms' => get_string('channel_sms', 'local_notificacoes')
+        ]
+    ));
+
+    // Remetente de e-mail
     $settings->add(new admin_setting_configtext(
         'local_notificacoes/email_sender',
         get_string('emailsender', 'local_notificacoes'),
         get_string('emailsender_desc', 'local_notificacoes'),
-        'admin@seudominio.com',
+        $CFG->noreplyaddress,
         PARAM_EMAIL
+    ));
+
+    // Template de e-mail
+    $settings->add(new admin_setting_configtextarea(
+        'local_notificacoes/email_template',
+        get_string('emailtemplate', 'local_notificacoes'),
+        get_string('emailtemplate_desc', 'local_notificacoes'),
+        get_string('default_email_template', 'local_notificacoes'),
+        PARAM_RAW,
+        '80',
+        '15'
     ));
 
     $ADMIN->add('localplugins', $settings);

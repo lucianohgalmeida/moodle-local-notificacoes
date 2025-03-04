@@ -3,7 +3,7 @@
  * Access permissions for the Automatic Notifications plugin.
  *
  * @package   local_notificacoes
- * @author    TecheEduconnect.com.br
+ * @author    
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -15,14 +15,16 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'manager' => CAP_ALLOW
-        ]
+        ],
+        'riskbitmask' => RISK_CONFIG // Adicionado risco de configuração
     ],
     'local/notificacoes:viewlogs' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE, // Contexto mais específico
         'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        ]
+        ],
+        'riskbitmask' => RISK_PERSONAL // Risco de expor dados pessoais
     ],
 ];
