@@ -1,9 +1,9 @@
 <?php
 /**
- * Biblioteca principal do plugin de Notificações Automáticas.
+ * Instalação do banco de dados para o plugin Notificações Automáticas.
  *
  * @package   local_notificacoes
- * @author    TecheEduconnect.com.br
+ * @author    TechEduConnect
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

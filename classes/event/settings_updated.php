@@ -1,4 +1,12 @@
 <?php
+/**
+ * Instalação do banco de dados para o plugin Notificações Automáticas.
+ *
+ * @package   local_notificacoes
+ * @author    TechEduConnect
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_notificacoes\event;
 
 defined('MOODLE_INTERNAL') || die();

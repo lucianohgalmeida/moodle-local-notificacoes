@@ -1,9 +1,9 @@
 <?php
 /**
- * Access permissions for the Automatic Notifications plugin.
+ * Instalação do banco de dados para o plugin Notificações Automáticas.
  *
  * @package   local_notificacoes
- * @author    
+ * @author    TechEduConnect
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

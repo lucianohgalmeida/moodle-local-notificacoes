@@ -3,7 +3,7 @@
  * Instalação do banco de dados para o plugin Notificações Automáticas.
  *
  * @package   local_notificacoes
- * @author    TecheEduconnect.com.br
+ * @author    TechEduConnect
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -23,13 +23,13 @@ function xmldb_local_notificacoes_install() {
     $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'ID do usuário');
     $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'ID do curso');
     $table->add_field('notificationtype', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'Tipo de notificação (matrícula/lembrete/forum)');
-    $table->add_field('status', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'enviado', 'Status: enviado|erro|reenviado');
+    $table->add_field('status', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'Status: enviado|erro|reenviado');
     $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'Data de criação');
     $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'Data de modificação');
 
     // 2. Definição de Chaves
     $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-    $table->add_key('userid_fk', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+    $table->add_key('userid_fk', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id'], XMLDB_KEY_FOREIGN_CASCADE);
     $table->add_key('courseid_fk', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
 
     // 3. Índices para Otimização
@@ -42,7 +42,13 @@ function xmldb_local_notificacoes_install() {
         $manager->create_table($table);
     }
 
-    // 5. Registro de Eventos (Opcional - Recomendado para observers)
-   // $eventHandler = core_plugin_manager::instance()->get_plugin_info('local_notificacoes');
-   // $eventHandler->add_event_handler('\core\event\user_enrolment_created', 'local_notificacoes_observer::user_enrolled');
+    // 5. Registro de Evento no Moodle (Opcional)
+    $DB->insert_record('event_handlers', [
+        'eventname' => '\\core\\event\\user_enrolment_created',
+        'component' => 'local_notificacoes',
+        'handlerfile' => '/local/notificacoes/classes/observer.php',
+        'handlerfunction' => 'user_enrolled',
+        'schedule' => 'instant',
+        'status' => 1
+    ]);
 }
