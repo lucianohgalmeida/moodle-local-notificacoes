@@ -38,7 +38,7 @@ if ($hassiteconfig) {
     ));
 
     // Seletor de categorias
-    $categories = coursecat::make_categories_list();
+    $categories = core_course_category::make_categories_list();
     $settings->add(new admin_setting_configmultiselect(
         'local_notificacoes/course_categories',
         get_string('coursecategories', 'local_notificacoes'),
@@ -101,15 +101,24 @@ if ($hassiteconfig) {
         PARAM_EMAIL
     ));
 
-    // Template de e-mail
-    $settings->add(new admin_setting_configtextarea(
+    // ==================== TEMPLATE DE E-MAIL ==================== //
+
+    // Definir o valor padrão corretamente
+    $defaulttemplate = get_string('default_email_template', 'local_notificacoes', 'Prezado(a) {fullname},
+
+Você tem uma nova notificação sobre o curso "{coursename}".
+
+Acesse sua área do aluno para mais detalhes.
+
+Atenciosamente,
+Equipe Acadêmica.');
+
+    // Adicionar o editor HTML para o template de e-mail
+    $settings->add(new admin_setting_confightmleditor(
         'local_notificacoes/email_template',
         get_string('emailtemplate', 'local_notificacoes'),
         get_string('emailtemplate_desc', 'local_notificacoes'),
-        get_string('default_email_template', 'local_notificacoes'),
-        PARAM_RAW,
-        '80',
-        '15'
+        $defaulttemplate
     ));
 
     $ADMIN->add('localplugins', $settings);

@@ -37,7 +37,24 @@ $string['channel_sms'] = 'SMS';
 $string['emailsender'] = 'Remetente de E-mail';
 $string['emailsender_desc'] = 'Endereço de e-mail que aparecerá como remetente';
 $string['emailtemplate'] = 'Template de E-mail';
-$string['emailtemplate_desc'] = 'Use placeholders: {user}, {course}, {date}';
+$string['emailtemplate_desc'] = 'Marcadores de posição: {firstname} → Primeiro nome do usuário
+{lastname} → Sobrenome do usuário
+{coursename} → Nome do curso
+{courseurl} → Link para acessar o curso
+{date} → Data formatada
+{username} → Nome de usuário do Moodle';
+$string['default_email_template'] = 'Prezado(a) {fullname},
+
+Você tem uma nova notificação sobre o curso "{coursename}".
+
+Acesse sua área do aluno para mais detalhes.
+
+Atenciosamente,
+Equipe Acadêmica.';
+
+// Matricula
+$string['messageprovider:matricula_confirmada'] = 'Confirmação de matrícula';
+
 
 // Notificações para Alunos
 $string['subject_enrollment'] = '📚 Matrícula Confirmada no Curso: {$a}';

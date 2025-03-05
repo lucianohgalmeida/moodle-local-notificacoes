@@ -9,7 +9,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_notificacoes';       // Nome técnico do componente (deve corresponder ao nome do diretório)
+$plugin->component = 'local_notificacoes'; // Deve ser 'local_notificacoes' e não 'notificacoes'
 $plugin->version   = 2023102301;                // Versão atual (AAAAMMDDXX - Ano/Mês/Dia/Sequência)
 $plugin->requires  = 2023041800;                // Requer Moodle 4.2 ou superior (versão mínima)
 $plugin->maturity  = MATURITY_STABLE;           // Estabilidade: Estável

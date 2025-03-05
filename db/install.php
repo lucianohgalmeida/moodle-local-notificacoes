@@ -43,6 +43,6 @@ function xmldb_local_notificacoes_install() {
     }
 
     // 5. Registro de Eventos (Opcional - Recomendado para observers)
-    $eventHandler = core_plugin_manager::instance()->get_plugin_info('local_notificacoes');
-    $eventHandler->add_event_handler('\core\event\user_enrolment_created', 'local_notificacoes_observer::user_enrolled');
+   // $eventHandler = core_plugin_manager::instance()->get_plugin_info('local_notificacoes');
+   // $eventHandler->add_event_handler('\core\event\user_enrolment_created', 'local_notificacoes_observer::user_enrolled');
 }

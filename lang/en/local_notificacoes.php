@@ -38,6 +38,17 @@ $string['emailsender'] = 'Email Sender';
 $string['emailsender_desc'] = 'Email address that will appear as sender';
 $string['emailtemplate'] = 'Email Template';
 $string['emailtemplate_desc'] = 'Use placeholders: {user}, {course}, {date}';
+$string['default_email_template'] = 'Dear {fullname},
+
+You have a new notification regarding the course "{coursename}".
+
+Access your student area for more details.
+
+Best regards,
+Academic Team.';
+
+//Confination
+$string['messageprovider:matricula_confirmada'] = 'Confirmação de matrícula';
 
 // Student Notifications
 $string['subject_enrollment'] = '📚 Enrollment Confirmed in Course: {$a}';
